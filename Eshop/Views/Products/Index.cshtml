@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Eshop.Models.Product>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<h2 class="mb-4" style="margin-top: 40px;">Danh sách sản phẩm</h2>
+
+<div class="row align-items-start">
+    @foreach (var p in Model)
+    {
+        if (p.Status)
+        {
+            <div class="col col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xxl-3 d-flex align-self-stretch mb-5">
+                <div class="card shadow" style="width: 18rem; border-radius: 1em;">
+                    <div style="overflow: hidden;">
+                        <img src="~/img/product/@p.Image" class="card-img-top zoom" alt="...">
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">
+                            @Html.DisplayFor(modelItem => p.Name)
+                        </h5>
+                        <p class="card-text text-primary">
+                            @Html.DisplayFor(modelItem => p.Price)
+                        </p>
+                        <div class="text-end">
+                            <a class="btn btn-primary cardHover" asp-controller="Products" asp-action="Details" asp-route-id="@p.Id">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+<button onclick="window.scrollTo(0,0);" id="linkTop">
+    <i class="fa-solid fa-circle-arrow-up fa-2xl" id="goTop"></i>
+</button>
+
+
+
+@*@foreach (var _item in Model.GroupBy(p => p.ProductTypeId, (key, items) =>
+            new
+            {
+                ProductTypeId = key,
+                items = items
+            }))
+    @foreach(var item in _item.items)
+             {
+                 <tr>
+                     <td>
+                         @Html.DisplayFor(modelItem => item.ProductType.Name)
+                     </td>
+                     <td>
+                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                     </td>
+                 </tr>
+             }*@
+
+@section CSS{
+    <link href="~/css/Product/Index.css" rel="stylesheet" />
+}
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            window.onscroll = () => {
+                if (document.body.scrollTop > 120 || document.documentElement.scrollTop > 120) {
+                    $('#goTop').show();
+                } else {
+                    $('#goTop').hide();
+                }
+            }
+        })
+    </script>
+}
