@@ -28,6 +28,7 @@ namespace Eshop.Models
         public Product Product { get; set; }
 
         [Required(ErrorMessage = "{0} không được bỏ trống")]
+        [DisplayName("Số lượng")]
         [DefaultValue(1)]
         public int Quantity { get; set; } = 1;
     }

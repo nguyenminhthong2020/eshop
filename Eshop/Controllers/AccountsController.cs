@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Eshop.Data;
 using Eshop.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Eshop.Controllers
 {
@@ -56,13 +57,49 @@ namespace Eshop.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login([Bind("Username, Password")] Account account)
+        public IActionResult Login(string Username, string Password)
         {
             if (ModelState.IsValid)
             {
-                int count = _context.Accounts.Count(_ => _.Username == account.Username && _.Password == account.Password);
-                if (count == 1)
+                Account user = _context.Accounts.Where(_ => _.Username == Username && _.Password == Password).FirstOrDefault();
+                if (user != null)
                 {
+                    // Giả sử muốn lưu cookie xuống client
+                    // append: lưu thêm 1 cookie vào cuối list cookie
+                    // vì sao lại .Response ? Vì cookie lưu ở client, server muốn client lưu
+                    // thêm cookie nào thì gửi yêu cầu trong Response
+                    // Khi người dùng gửi Request sẽ gửi kèm cookie
+
+                    //CookieOptions cookieOptions = new CookieOptions
+                    //{
+                    //    Expires = DateTime.Now.AddDays(7),
+                    //    Domain = ".eshop.com",   // tên miền có www hay không đều được
+                    //    Path = "/Accounts/"      // chỉ có hiệu lực với Accounts (mặc định là /)
+                    //};
+                    //HttpContext.Response.Cookies.Append("Cookie_AccountId", user.Id.ToString(), cookieOptions);
+                    //HttpContext.Response.Cookies.Append("Cookie_AccountUsername", user.Username, cookieOptions);
+
+                    // Kiểm tra  ở các action khác: (kiểm tra request gửi lên có cookie không)
+                    //if (HttpContext.Request.Cookies.ContainsKey("Cookie_AccountUsername"))
+                    //{
+                    // ViewBag.AccountUsername = HttpContext.Request.Cookies["Cookie_AccountUsername"];
+                    //}
+
+                    HttpContext.Session.SetInt32("Account_Id", user.Id);
+                    HttpContext.Session.SetString("Account_Username", user.Username);
+                    HttpContext.Session.SetString("Account_IsAdmin", user.IsAdmin.ToString());
+
+                    if (TempData["prevController"] != null && TempData["prevAction"] != null)
+                    {
+                        var _prevController = TempData["prevController"].ToString();
+                        var _prevAction = TempData["prevAction"].ToString();
+
+                        TempData["prevController"] = null;
+                        TempData["prevAction"] = null;
+
+                        return RedirectToAction(_prevAction, _prevController);
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -72,6 +109,17 @@ namespace Eshop.Controllers
                 }
             }
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            // ghi cookie cùng tên xuống cline và ho ngày expire là quá khứ
+            //HttpContext.Response.Cookies.Append("Cookie_AccountId", "", new CookieOptions{Expires = DateTime.Now.AddDays(-1)});
+            //HttpContext.Response.Cookies.Append("Cookie_AccountUsername", "", new CookieOptions{Expires = DateTime.Now.AddDays(-1));
+
+            //HttpContext.Session.Remove("Account_Username");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Accounts/Create

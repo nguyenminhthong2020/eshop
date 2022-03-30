@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Eshop.Data;
 using Eshop.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Eshop.Controllers
 {
@@ -22,8 +23,26 @@ namespace Eshop.Controllers
         // GET: Carts
         public async Task<IActionResult> Index()
         {
-            var eshopContext = _context.Carts.Include(c => c.Account).Include(c => c.Product);
-            return View(await eshopContext.ToListAsync());
+            //if (HttpContext.Session.Keys.Contains("Account_Username"))
+            //{
+
+            //}
+            if (HttpContext.Session.GetString("Account_Username") != null)
+            {
+                var Account_Username = HttpContext.Session.GetString("Account_Username");
+
+                var eshopContext = _context.Carts.Include(c => c.Account)
+                                             .Include(c => c.Product)
+                                             .Where(c => c.Account.Username == Account_Username);
+                return View(await eshopContext.ToListAsync());
+            }
+            else
+            {
+                TempData["prevController"] = "Carts";
+                TempData["prevAction"] = "Index";
+
+                return RedirectToAction("Login", "Accounts");
+            }
         }
 
         // GET: Carts/Details/5

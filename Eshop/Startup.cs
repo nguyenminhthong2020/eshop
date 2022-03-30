@@ -25,10 +25,26 @@ namespace Eshop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // phải có lệnh này khi muốn dùng session
+            // cho phép ứng dụng sử dụng bộ nhớ đệm phân tán
+            // Session sẽ được lưu vào bộ nhớ đệm này
+            // Distributed memory cache
+            services.AddDistributedMemoryCache();
+
             services.AddControllersWithViews();
 
             services.AddDbContext<EshopContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("EshopContext")));
+
+            services.AddSession(options =>
+            {
+                // TimeSpan(7,0,0,0) : 7 ngày
+                //options.IdleTimeout = new TimeSpan(0, 30, 0); tương đương với
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+
+                //options.Cookie.Name = "EshopSession";  // không bắt buộc
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +64,7 @@ namespace Eshop
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();   // bắt buộc phải nằm sau useRouting & nằm trước useEndpoints
 
             app.UseAuthorization();
 

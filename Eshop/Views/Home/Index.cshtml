@@ -1,8 +1,21 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+
+@{
     ViewData["Title"] = "Home Page";
+    //var username = Context.Request.Cookies["Cookie_AccountUsername"];
+
+    //string username = null;
+    //if (Context.Session.GetString("Account_Username") != null)
+    //{
+    //    username = Context.Session.GetString("Account_Username");
+    //}
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Welcome @(Context.Session.GetString("Account_Username") ?? null)</h1>
+    @if (Context.Session.GetString("Account_Username") != null)
+    {
+        <a asp-controller="Accounts" asp-action="Logout" class="btn btn-danger">Đăng xuất</a>
+    }
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

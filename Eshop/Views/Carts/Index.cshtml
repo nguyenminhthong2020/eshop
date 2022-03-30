@@ -1,47 +1,71 @@
 ﻿@model IEnumerable<Eshop.Models.Cart>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Giỏ hàng";
 }
 
-<h1>Index</h1>
+<h2 class="mb-3">Giỏ hàng</h2>
+@*<a asp-action="Create">
+        Thêm
+    </a>*@
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
+            <th>STT</th>
+            <th>@Html.DisplayNameFor(model => model.Product.Image)</th>
             <th>
-                @Html.DisplayNameFor(model => model.Account)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product)
+                @Html.DisplayNameFor(model => model.Product.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.Price)
+            </th>
+            <th>Thành tiền</th>
+            <th>Chức năng</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Account.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @{
+            int i = 0;
+        }
+        @foreach (var item in Model)
+        {
+            i++;
+            <tr>
+                <td>
+                    @i
+                </td>
+                <td>
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">
+                        <img src="~/img/product/@item.Product.Image" alt="@item.Product.Name" width="100" />
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" style="text-decoration: none;">
+                        @Html.DisplayFor(modelItem => item.Product.Name)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Price)
+                </td>
+                <td>
+                    @*Hoặc ToString("#,##0")*@
+                    @((item.Quantity * item.Product.Price).ToString(@"0,# VNĐ"))
+                </td>
+                <td>
+                    @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                    <a asp-action="Delete" asp-route-id="@item.Id">
+                        <i class="fa-solid fa-trash-can" style="color: red; font-size: 25px;"></i>
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

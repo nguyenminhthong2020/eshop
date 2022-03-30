@@ -4,7 +4,7 @@
     ViewData["Title"] = "Danh sách sản phẩm";
 }
 
-<h2 class="mb-4" style="margin-top: 40px;">Danh sách sản phẩm</h2>
+<h2 class="mb-3" style="margin-top: 30px;">Danh sách sản phẩm</h2>
 
 <div class="row align-items-start">
     @foreach (var p in Model)
@@ -12,7 +12,7 @@
         if (p.Status)
         {
             <div class="col col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xxl-3 d-flex align-self-stretch mb-5">
-                <div class="card shadow" style="width: 18rem; border-radius: 1em;">
+                <div class="card shadow border-0" style="width: 18rem; border-radius: 1em;">
                     <div style="overflow: hidden;">
                         <img src="~/img/product/@p.Image" class="card-img-top zoom" alt="...">
                     </div>
@@ -20,11 +20,13 @@
                         <h5 class="card-title">
                             @Html.DisplayFor(modelItem => p.Name)
                         </h5>
-                        <p class="card-text text-primary">
-                            @Html.DisplayFor(modelItem => p.Price)
-                        </p>
                         <div class="text-end">
-                            <a class="btn btn-primary cardHover" asp-controller="Products" asp-action="Details" asp-route-id="@p.Id">Xem chi tiết</a>
+                            <p class="card-text text-danger">
+                                @Html.DisplayFor(modelItem => p.Price)
+                            </p>
+                            <a class="btn btn-primary cardHover" asp-controller="Products" asp-action="Details" asp-route-id="@p.Id">
+                                <i class="fa-solid fa-eye"></i>&nbsp;&nbsp;Chi tiết
+                            </a>
                         </div>
                     </div>
                 </div>
